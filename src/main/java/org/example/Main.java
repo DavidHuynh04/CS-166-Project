@@ -21,8 +21,9 @@ public class Main {
         List<List<String>> userData = new ArrayList<>();
         try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("bot_detection_data.csv");
              CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
-            while(reader.readNext()!= null) {
-                userData.add(Arrays.asList(reader.readNext()));
+            String[] user;
+            while((user = reader.readNext())!= null) {
+                userData.add(Arrays.asList(user));
             }
             int[] userCredibility = new int[userData.size()];
             Arrays.fill(userCredibility, 10);
