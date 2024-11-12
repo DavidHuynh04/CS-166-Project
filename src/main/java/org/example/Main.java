@@ -11,7 +11,7 @@ import java.util.*;
 public class Main {
     private static void verificationChecker(List<List<String>> userData, int[] userCredibility){
         for (int i = 0; i < userData.size(); i++){
-            if (Objects.equals(userData.get(i).get(6), "false")){
+            if (Objects.equals(userData.get(i).get(6), "False")){
                 userCredibility[i] -= 2;
             }
         }
