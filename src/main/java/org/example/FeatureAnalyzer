@@ -1,0 +1,51 @@
+package org.example;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
+
+import java.io.*;
+import java.util.*;
+
+public class FeatureAnalyzer {
+
+    public static void main(String[] args) {
+        List<List<String>> userData = new ArrayList<>();
+        try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("bot_detection_data.csv");
+             CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
+            String[] user;
+            while((user = reader.readNext())!= null) {
+                userData.add(Arrays.asList(user));
+            }
+            double botCount = 0, botFollowers = 0, botVerification = 0, botRetweets = 0, botMentions = 0;
+            double userCount = 0, userFollowers = 0,userVerification = 0, userRetweets = 0, userMentions = 0;
+
+            for (int i = 1; i < userData.size(); i++) {
+                if (Objects.equals(userData.get(i).get(7), "0")) {
+                    userCount++;
+                    userFollowers += Integer.parseInt(userData.get(i).get(5));
+                    if (Objects.equals(userData.get(i).get(6), "True")) {
+                        userVerification += 1;
+                    }
+                    userRetweets += Integer.parseInt(userData.get(i).get(3));
+                    userMentions += Integer.parseInt(userData.get(i).get(4));
+                } else {
+                    botCount++;
+                    botFollowers += Integer.parseInt(userData.get(i).get(5));
+                    if (Objects.equals(userData.get(i).get(6), "True")) {
+                        botVerification += 1;
+                    }
+                    botRetweets += Integer.parseInt(userData.get(i).get(3));
+                    botMentions += Integer.parseInt(userData.get(i).get(4));
+                }
+            }
+            System.out.println("User Count: " + userCount + "\nAverage Followers: " + String.format("%.2f",userFollowers/userCount) + "\nAverage Retweets: " + String.format("%.2f",userRetweets/userCount) + "\nAverage Mentions: " + String.format("%.2f",userMentions/userCount) + "\nVerification Status: " + String.format("%.2f",100*userVerification/userCount) + "%");
+            System.out.println("Bot Count: " + botCount + "\nAverage Followers: " + String.format("%.2f",botFollowers/botCount) + "\nAverage Retweets: " + String.format("%.2f",botRetweets/botCount) + "\nAverage Mentions: " + String.format("%.2f",botMentions/botCount) + "\nVerification Status: " + String.format("%.2f",100*botVerification/botCount) + "%");
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
